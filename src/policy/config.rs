@@ -120,7 +120,7 @@ impl Policy {
     }
 
     /// Mutate this Policy to apply the recommended **production defaults**.
-    pub const fn apply_production_preset(&mut self) -> &mut Self {
+    pub fn apply_production_preset(&mut self) -> &mut Self {
         self.rescue.require = true;
         self.rescue.exec_check = true;
         self.governance.locking = LockingPolicy::Required;
