@@ -1,12 +1,12 @@
 [package]
-name = "switchyard"
+name = "switchyard-fs"
 version = "0.1.0"
 edition = "2021"
 description = "Switchyard: safe, atomic, reversible filesystem swaps with policy and audit"
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/veighnsche/switchyard"
 homepage = "https://veighnsche.github.io/switchyard/"
-documentation = "https://docs.rs/switchyard"
+documentation = "https://docs.rs/switchyard-fs"
 readme = "README.md"
 keywords = ["filesystem", "atomic", "swap", "reversible"]
 categories = ["filesystem", "os::unix-apis"]

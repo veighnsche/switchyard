@@ -4,7 +4,7 @@
 - [Quickstart](quickstart.md)
 - [Safety First](safety-first.md)
 - [Architecture Overview](architecture.md)
-- Concepts
+- [Concepts](concepts/README.md)
   - [Plan, Actions, and IDs](concepts/plan-actions-ids.md)
   - [Preflight](concepts/preflight.md)
   - [Apply](concepts/apply.md)
@@ -13,13 +13,13 @@
   - [Rescue](concepts/rescue.md)
   - [Cross-filesystem (EXDEV)](concepts/exdev.md)
   - [Audit Facts and Redaction](concepts/audit-facts.md)
-- How-Tos
+- [How-Tos](how-tos/README.md)
   - [Configure a Lock Manager](how-tos/lock-manager.md)
   - [Use SafePath](how-tos/safepath.md)
   - [Capture and Verify Audit](how-tos/audit-capture.md)
   - [Validate Facts Against Schema v2](how-tos/validate-facts.md)
   - [Prune Backups](how-tos/prune-backups.md)
-- Reference
+- [Reference](reference/README.md)
   - [Public API (rustdoc)](reference/public-api.md)
   - [Error Codes](reference/error-codes.md)
   - [Preflight Schema](reference/preflight-schema.md)

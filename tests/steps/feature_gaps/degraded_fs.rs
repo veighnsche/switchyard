@@ -129,7 +129,8 @@ pub async fn then_semantics_verified(world: &mut World) {
     world.policy.governance.allow_unlocked_commit = true;
     world.rebuild_api();
     crate::steps::plan_steps::given_exdev_env(world).await;
-    let plan = world.api.as_ref().unwrap().plan(build_cp_plan(world));
+    let input = build_cp_plan(world);
+    let plan = world.api.as_ref().unwrap().plan(input);
     let _ = world
         .api
         .as_ref()
@@ -144,7 +145,8 @@ pub async fn then_semantics_verified(world: &mut World) {
     world.policy.governance.allow_unlocked_commit = true;
     world.rebuild_api();
     crate::steps::plan_steps::given_exdev_env(world).await;
-    let plan2 = world.api.as_ref().unwrap().plan(build_cp_plan(world));
+    let input2 = build_cp_plan(world);
+    let plan2 = world.api.as_ref().unwrap().plan(input2);
     let _ = world
         .api
         .as_ref()

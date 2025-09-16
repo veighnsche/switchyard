@@ -70,7 +70,7 @@ impl AuditSink for CollectingAudit {
 Alternatively (disk-based, feature-gated):
 
 ```rust
-// Use when running with: cargo test -p switchyard --features file-logging
+// Use when running with: cargo test -p switchyard-fs --features file-logging
 use switchyard::logging::facts::FileJsonlSink;
 let facts = FileJsonlSink::new("/tmp/switchyard-bdd/facts.jsonl");
 let audit = FileJsonlSink::new("/tmp/switchyard-bdd/audit.jsonl");
@@ -164,13 +164,13 @@ Notes:
 - Run all features:
 
 ```bash
-cargo test -p switchyard --test bdd -- --nocapture
+cargo test -p switchyard-fs --test bdd -- --nocapture
 ```
 
 - Run with file sink (write JSONL), then validate lines:
 
 ```bash
-cargo test -p switchyard --test bdd --features file-logging -- --nocapture
+cargo test -p switchyard-fs --test bdd --features file-logging -- --nocapture
 ```
 
 You can filter by tags using cucumber-rs’s runtime options or by splitting feature sets.
@@ -235,6 +235,6 @@ From your Then steps, load `/tmp/switchyard-bdd/facts.jsonl` lines, `serde_json:
    - Define a `World` holding `Switchyard`, `Plan`, reports, and sinks.
    - Implement Given/When/Then mapping to Switchyard APIs.
    - Point the runner at `cargo/switchyard/SPEC/features/`.
-4. Run: `cargo test -p switchyard --test bdd -- --nocapture` (and optionally `--features file-logging`).
+4. Run: `cargo test -p switchyard-fs --test bdd -- --nocapture` (and optionally `--features file-logging`).
 
 That’s it. You can now execute the Gherkin features against the Switchyard library code and assert Audit v2 facts, preflight YAML parity, and error/exit-code classifications.

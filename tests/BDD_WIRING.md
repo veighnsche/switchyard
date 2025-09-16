@@ -141,14 +141,14 @@ You can scope runs to a single file or directory using the `SWITCHYARD_BDD_FEATU
 - All features with verbose output:
 
 ```bash
-cargo test -p switchyard --features bdd --test bdd -- --nocapture
+cargo test -p switchyard-fs --features bdd --test bdd -- --nocapture
 ```
 
 - A single feature or directory (path relative to crate root or absolute):
 
 ```bash
 SWITCHYARD_BDD_FEATURE_PATH=SPEC/features/atomicity.feature \
-  cargo test -p switchyard --features bdd --test bdd -- --nocapture
+  cargo test -p switchyard-fs --features bdd --test bdd -- --nocapture
 ```
 
 ### Helper script: failure-only filter
@@ -198,6 +198,7 @@ The script stores the full raw output at `target/bdd-lastrun.log` for later insp
 
 - "Running in CI":
   - The standard GitHub CI workflow runs unit/integration tests and a separate golden-fixtures flow. The BDD cucumber runner is primarily for local/spec validation and is not always invoked in CI by default. You can add a job that runs `cargo test -p switchyard --features bdd --test bdd -- --nocapture` if required.
+  - Updated package name: use `switchyard-fs` with `-p` when running from the repository root, e.g., `cargo test -p switchyard-fs --features bdd --test bdd -- --nocapture`.
 
 
 ## Extending BDD
@@ -221,7 +222,7 @@ The script stores the full raw output at `target/bdd-lastrun.log` for later insp
 ```bash
 # From repo root
 # Run all BDD features with full output
-cargo test -p switchyard --features bdd --test bdd -- --nocapture
+cargo test -p switchyard-fs --features bdd --test bdd -- --nocapture
 
 # Or iterate on a single feature and only show failures
 ./scripts/bdd_filter_results.py --features SPEC/features/atomicity.feature --fail-only

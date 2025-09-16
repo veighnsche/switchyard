@@ -189,9 +189,9 @@ SPEC/
 ```
 
 - `Cargo.toml` metadata (already aligned in monorepo crate):
-  - `name = "switchyard"`
+  - `name = "switchyard-fs"`
   - `homepage = "https://<org>.github.io/<repo>/"` (GitHub Pages URL)
-  - `documentation = "https://docs.rs/switchyard"`
+  - `documentation = "https://docs.rs/switchyard-fs"`
   - `readme = "README.md"`
   - `keywords`, `categories`, `rust-version`, `exclude`
   - `[badges]` and `[package.metadata.docs.rs]`
@@ -285,8 +285,8 @@ jobs:
 Add these near the top of `README.md` in the new repo:
 
 ```md
-[![Crates.io](https://img.shields.io/crates/v/switchyard.svg)](https://crates.io/crates/switchyard)
-[![docs.rs](https://img.shields.io/docsrs/switchyard)](https://docs.rs/switchyard)
+[![Crates.io](https://img.shields.io/crates/v/switchyard-fs.svg)](https://crates.io/crates/switchyard-fs)
+[![docs.rs](https://img.shields.io/docsrs/switchyard-fs)](https://docs.rs/switchyard-fs)
 [![CI](https://github.com/<org>/<repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<org>/<repo>/actions/workflows/ci.yml)
 [![mdBook](https://img.shields.io/badge/book-mdBook-blue)](https://<org>.github.io/<repo>/)
 [![License: Apache-2.0/MIT](https://img.shields.io/badge/license-Apache--2.0%2FMIT-blue.svg)](./LICENSE)

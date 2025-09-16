@@ -90,7 +90,7 @@ Notes:
   - Introduce a simple generator: write canon files out (behind a `--update-goldens` or test feature flag).
 - Tooling:
   - Extend the Python `test_ci_runner.py` to support a `--golden <scenario>` command that:
-    - Runs the scenario (calls `cargo test -p switchyard <scenario>`),
+    - Runs the scenario (calls `cargo test -p switchyard-fs <scenario>`),
     - Emits canon JSON to a temp directory,
     - Optionally updates committed goldens when explicitly requested.
 - Pros/Cons:

@@ -99,7 +99,7 @@ See reference guide: `cargo/switchyard/SPEC/features/bdd_adapter_guide.md`
 
 ## CI integration
 
-- [x] Command to run: `cargo test -p switchyard` (BDD enabled by default feature).
+- [x] Command to run: `cargo test -p switchyard-fs` (BDD enabled by default feature).
 - [x] Guardrails:
   - [x] No skipped scenarios (runner uses `fail_on_skipped`).
   - [x] Harness-less cucumber test registered in `Cargo.toml` (`[[test]] name = "bdd"; harness = false`).

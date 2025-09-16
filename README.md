@@ -1,7 +1,7 @@
 # Switchyard (Library Crate)
 
-[![Crates.io](https://img.shields.io/crates/v/switchyard.svg)](https://crates.io/crates/switchyard)
-[![docs.rs](https://img.shields.io/docsrs/switchyard)](https://docs.rs/switchyard)
+[![Crates.io](https://img.shields.io/crates/v/switchyard-fs.svg)](https://crates.io/crates/switchyard-fs)
+[![docs.rs](https://img.shields.io/docsrs/switchyard-fs)](https://docs.rs/switchyard-fs)
 [![CI](https://github.com/veighnsche/switchyard/actions/workflows/test.yml/badge.svg)](https://github.com/veighnsche/switchyard/actions/workflows/test.yml)
 [![mdBook](https://img.shields.io/badge/book-mdBook-blue)](https://veighnsche.github.io/switchyard/)
 [![License: Apache-2.0/MIT](https://img.shields.io/badge/license-Apache--2.0%2FMIT-blue.svg)](./LICENSE)
@@ -9,7 +9,7 @@
 
 > Operator & Integrator Guide (mdBook): <https://veighnsche.github.io/switchyard/>
 >
-> API docs on docs.rs: <https://docs.rs/switchyard>
+> API docs on docs.rs: <https://docs.rs/switchyard-fs>
 
 Switchyard is a Rust library that provides a safe, deterministic, and auditable engine for applying system changes with:
 
@@ -53,7 +53,7 @@ Status: Core flows implemented with structured audit and locking; some features 
 
 - Operator & Integrator Guide (mdBook): <https://veighnsche.github.io/switchyard/>
   - Quickstart, Concepts, How‑Tos, and Reference live in the book.
-- API docs on docs.rs: <https://docs.rs/switchyard>
+- API docs on docs.rs: <https://docs.rs/switchyard-fs>
 
 ### Examples
 
@@ -79,7 +79,7 @@ Add as a dependency (when used standalone):
 
 ```toml
 [dependencies]
-switchyard = "0.1"
+switchyard = { package = "switchyard-fs", version = "0.1" }
 ```
 
 Add as a dependency (when used as a workspace submodule):
@@ -216,7 +216,7 @@ let api = Switchyard::builder(facts, audit, policy)
 Run all tests for this crate:
 
 ```bash
-cargo test -p switchyard
+cargo test -p switchyard-fs
 ```
 
 Useful environment variables:
