@@ -8,13 +8,16 @@ on:
 
 jobs:
   msrv:
+    name: Build on MSRV toolchain
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Rust (1.81)
+
+      - name: Set up Rust (1.81.0)
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: 1.81.0
+
       - name: Cache cargo
         uses: actions/cache@v4
         with:
@@ -23,5 +26,6 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Build (MSRV)
-        run: cargo build --all-features
+
+      - name: Build workspace (all features)
+        run: cargo build --all-features --workspace

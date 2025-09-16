@@ -5,7 +5,8 @@
 [![CI](https://github.com/veighnsche/switchyard/actions/workflows/test.yml/badge.svg)](https://github.com/veighnsche/switchyard/actions/workflows/test.yml)
 [![mdBook](https://img.shields.io/badge/book-mdBook-blue)](https://veighnsche.github.io/switchyard/)
 [![License: Apache-2.0/MIT](https://img.shields.io/badge/license-Apache--2.0%2FMIT-blue.svg)](./LICENSE)
-[![MSRV 1.75+](https://img.shields.io/badge/MSRV-1.75%2B-informational)](./Cargo.toml)
+[![MSRV 1.81+](https://img.shields.io/badge/MSRV-1.81%2B-informational)](./Cargo.toml)
+[![Rust 1.89.0 stable](https://img.shields.io/badge/rust-1.89.0%20stable-blue?logo=rust)](https://blog.rust-lang.org/2025/08/07/Rust-1.89.0/)
 
 > Operator & Integrator Guide (mdBook): <https://veighnsche.github.io/switchyard/>
 >
@@ -54,6 +55,13 @@ Status: Core flows implemented with structured audit and locking; some features 
 - Operator & Integrator Guide (mdBook): <https://veighnsche.github.io/switchyard/>
   - Quickstart, Concepts, How‑Tos, and Reference live in the book.
 - API docs on docs.rs: <https://docs.rs/switchyard-fs>
+
+### Supported Toolchains
+
+- Stable (latest) — continuously tested in CI
+- Beta — continuously tested in CI
+- Nightly — continuously tested in CI
+- MSRV: 1.81 (declared in `Cargo.toml`; MSRV job builds the workspace on 1.81.0)
 
 ### Examples
 
@@ -404,4 +412,4 @@ This crate is dual-licensed under either:
 - MIT License — see repository root `LICENSE-MIT`
 at your option.
 
-Minimum Supported Rust Version (MSRV): 1.75
+Minimum Supported Rust Version (MSRV): 1.81

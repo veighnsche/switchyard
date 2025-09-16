@@ -10,7 +10,7 @@ documentation = "https://docs.rs/switchyard-fs"
 readme = "README.md"
 keywords = ["filesystem", "atomic", "swap", "reversible"]
 categories = ["filesystem", "os::unix-apis"]
-rust-version = "1.75"
+rust-version = "1.81"
 
 # Keep the published crate small; crates.io serves README and links only.
 exclude = [

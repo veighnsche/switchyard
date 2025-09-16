@@ -23,6 +23,13 @@ Safety highlights (from SPEC)
 - Rescue profile verification and minimal smoke suite with auto-rollback (§2.6, §2.9, §2.10, §11).
 - Auditability: schema v2 JSON facts, before/after hashes, optional signed attestation (§5).
 
+## Supported Toolchains
+
+- Stable: 1.89.0 (continuously tested in CI) — see the announcement: https://blog.rust-lang.org/2025/08/07/Rust-1.89.0/
+- MSRV: 1.81 (declared in `Cargo.toml` and enforced by the `MSRV` workflow)
+
+Nightly and Beta channels are also exercised in CI for early signal.
+
 Integration note
 - If you are building a CLI on top (e.g., a distro tool), keep the front-end simple while Switchyard ensures safety. A common pattern is a small set of user-facing commands (e.g., use/replace/restore) with all filesystem safety delegated to Switchyard. See "CLI Integration Guidance (SafePath)" in SPEC §16.
 
