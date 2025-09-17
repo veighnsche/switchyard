@@ -1,18 +1,22 @@
-name: BDD
+name: Golden Fixtures
 
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'cargo/switchyard/**'
+      - 'test_ci_runner.py'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'cargo/switchyard/**'
+      - 'test_ci_runner.py'
 
 jobs:
-  bdd:
+  golden:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -25,13 +29,13 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Run BDD (failure-only output on failure)
+      - name: Run golden diff (all scenarios)
         run: |
-          python3 cargo/switchyard/scripts/bdd_filter_results.py --fail-only
-      - name: Upload BDD lastrun log
+          python3 test_ci_runner.py --golden all --nocapture
+      - name: Upload golden diffs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bdd-lastrun
-          path: cargo/switchyard/target/bdd-lastrun.log
+          name: golden-diff
+          path: golden-diff
           if-no-files-found: ignore
