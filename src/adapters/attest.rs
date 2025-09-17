@@ -36,7 +36,10 @@ pub trait Attestor: Send + Sync {
 
 /// Build a JSON object with attestation fields for emission given an attestor and a bundle.
 /// Returns None if signing fails.
-pub fn build_attestation_fields<A: Attestor + ?Sized>(att: &A, bundle: &[u8]) -> Option<serde_json::Value> {
+pub fn build_attestation_fields<A: Attestor + ?Sized>(
+    att: &A,
+    bundle: &[u8],
+) -> Option<serde_json::Value> {
     use base64::Engine as _;
     use sha2::Digest as _;
     let sig = att.sign(bundle).ok()?;

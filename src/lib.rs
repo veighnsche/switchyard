@@ -2,10 +2,7 @@
 // Tests may use unit-struct defaults and complex types for world/test scaffolding
 #![cfg_attr(
     test,
-    allow(
-        clippy::default_constructed_unit_structs,
-        clippy::type_complexity
-    )
+    allow(clippy::default_constructed_unit_structs, clippy::type_complexity)
 )]
 #![doc = include_str!("../README.md")]
 /* ---- unwrap/expect policy ---- */
