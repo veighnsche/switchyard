@@ -26,7 +26,8 @@ pub async fn given_failing_smoke_runner(world: &mut World) {
         world.policy.clone(),
     )
     .with_smoke_runner(Box::new(Failing))
-    .build();
+    .build()
+    .with_overrides(switchyard::api::Overrides::exdev(false));
     world.api = Some(api);
     world.smoke_runner = Some(crate::bdd_world::SmokeRunnerKind::Failing);
 }
@@ -94,7 +95,8 @@ pub async fn given_configured_smoke_runner(world: &mut World) {
         world.policy.clone(),
     )
     .with_smoke_runner(Box::new(switchyard::adapters::DefaultSmokeRunner))
-    .build();
+    .build()
+    .with_overrides(switchyard::api::Overrides::exdev(false));
     world.api = Some(api);
 }
 
@@ -103,6 +105,22 @@ pub async fn given_auto_rollback_enabled(world: &mut World) {
     world.policy.governance.smoke = switchyard::policy::types::SmokePolicy::Require {
         auto_rollback: true,
     };
+    // Ensure this scenario reaches the smoke runner deterministically:
+    // - Bypass preflight gating to avoid environment-specific STOPs (mount noexec, ownership, etc.)
+    // - Explicitly disable any EXDEV injection so apply succeeds and smoke can fail
+    world.policy.apply.override_preflight = true;
+    world
+        .env_guards
+        .push(crate::bdd_support::env::EnvGuard::new(
+            "SWITCHYARD_TEST_ALLOW_ENV_OVERRIDES",
+            "0",
+        ));
+    world
+        .env_guards
+        .push(crate::bdd_support::env::EnvGuard::new(
+            "SWITCHYARD_FORCE_EXDEV",
+            "0",
+        ));
     // Preserve any configured runner when rebuilding API
     let mut builder = Switchyard::builder(
         world.facts.clone(),
@@ -180,15 +198,34 @@ pub async fn then_minimal_smoke_runs(world: &mut World) {
 #[then(regex = r"^apply fails with error_id=E_SMOKE and exit_code=80$")]
 pub async fn then_apply_fails_smoke(world: &mut World) {
     let mut ok = false;
+    let mut dbg: Vec<String> = Vec::new();
     for ev in world.all_facts() {
-        if ev.get("error_id").and_then(|v| v.as_str()) == Some("E_SMOKE")
-            && ev.get("exit_code").and_then(|v| v.as_i64()) == Some(80)
-        {
+        let stage = ev.get("stage").and_then(|v| v.as_str()).unwrap_or("");
+        let decision = ev.get("decision").and_then(|v| v.as_str()).unwrap_or("");
+        let action = ev.get("action_id").and_then(|v| v.as_str());
+        let eid = ev.get("error_id").and_then(|v| v.as_str());
+        let ec = ev.get("exit_code").and_then(|v| v.as_i64());
+        let sum = ev
+            .get("summary_error_ids")
+            .and_then(|v| v.as_array())
+            .map(|arr| {
+                let mut v: Vec<String> = arr
+                    .iter()
+                    .filter_map(|x| x.as_str().map(|s| s.to_string()))
+                    .collect();
+                v.sort();
+                v.join(",")
+            });
+        dbg.push(format!(
+            "{} {} action={:?} eid={:?} ec={:?} summary={:?}",
+            stage, decision, action, eid, ec, sum
+        ));
+        if eid == Some("E_SMOKE") && ec == Some(80) {
             ok = true;
             break;
         }
     }
-    assert!(ok, "expected E_SMOKE with exit_code=80");
+    assert!(ok, "expected E_SMOKE with exit_code=80; events=\n{}", dbg.join("\n"));
 }
 
 #[then(regex = r"^executed actions are rolled back automatically$")]

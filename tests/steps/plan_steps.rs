@@ -1,7 +1,8 @@
 use cucumber::{given, when};
 
-use crate::bdd_support::env::EnvGuard;
 use crate::bdd_world::World;
+use crate::bdd_support::env::EnvGuard;
+use switchyard::api::{Overrides, Switchyard};
 use switchyard::policy::types::SmokePolicy;
 
 #[given(regex = r"^(/.+) is a symlink to (.+)$")]
@@ -24,12 +25,43 @@ pub async fn given_plan_min(world: &mut World) {
 
 #[given(regex = r"^the target and staging directories reside on different filesystems$")]
 pub async fn given_exdev_env(world: &mut World) {
-    world
-        .env_guards
-        .push(EnvGuard::new("SWITCHYARD_TEST_ALLOW_ENV_OVERRIDES", "1"));
-    world
-        .env_guards
-        .push(EnvGuard::new("SWITCHYARD_FORCE_EXDEV", "1"));
+    // Use per-instance override to simulate EXDEV deterministically, avoiding process-global env.
+    let mut builder = Switchyard::builder(
+        world.facts.clone(),
+        world.audit.clone(),
+        world.policy.clone(),
+    );
+    // Preserve a LockManager if configured by the scenario
+    if let Some(lock_path) = &world.lock_path {
+        builder = builder.with_lock_manager(Box::new(
+            switchyard::adapters::FileLockManager::new(lock_path.clone()),
+        ));
+    }
+    // Preserve an explicitly configured smoke runner
+    if let Some(kind) = world.smoke_runner {
+        match kind {
+            crate::bdd_world::SmokeRunnerKind::Default => {
+                builder = builder.with_smoke_runner(Box::new(
+                    switchyard::adapters::DefaultSmokeRunner,
+                ));
+            }
+            crate::bdd_world::SmokeRunnerKind::Failing => {
+                #[derive(Debug, Default)]
+                struct Failing;
+                impl switchyard::adapters::SmokeTestRunner for Failing {
+                    fn run(
+                        &self,
+                        _plan: &switchyard::types::plan::Plan,
+                    ) -> Result<(), switchyard::adapters::smoke::SmokeFailure> {
+                        Err(switchyard::adapters::smoke::SmokeFailure)
+                    }
+                }
+                builder = builder.with_smoke_runner(Box::new(Failing));
+            }
+        }
+    }
+    let api = builder.build().with_overrides(Overrides::exdev(true));
+    world.api = Some(api);
 }
 
 #[given(regex = r"^the minimal post-apply smoke suite is configured$")]

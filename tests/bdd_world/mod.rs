@@ -43,14 +43,35 @@ pub struct World {
 impl World {
     pub fn ensure_root(&mut self) -> &Path {
         if self.root.is_none() {
-            self.root = Some(tempfile::TempDir::new().expect("tempdir"));
+            // Prefer an exec-mounted base under the crate's target dir to avoid noexec /tmp on some systems.
+            // Priority: SWITCHYARD_BDD_ROOT_BASE > CARGO_TARGET_DIR > <crate>/target
+            let base: std::path::PathBuf = std::env::var("SWITCHYARD_BDD_ROOT_BASE")
+                .ok()
+                .map(std::path::PathBuf::from)
+                .or_else(|| std::env::var("CARGO_TARGET_DIR").ok().map(std::path::PathBuf::from))
+                .unwrap_or_else(|| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target"));
+            let base = base.join("bdd-tmp");
+            let _ = std::fs::create_dir_all(&base);
+            let td = tempfile::Builder::new()
+                .prefix("switchyard-bdd-")
+                .tempdir_in(&base)
+                .or_else(|_| tempfile::TempDir::new())
+                .expect("tempdir");
+            self.root = Some(td);
         }
         self.root.as_ref().unwrap().path()
     }
 
     pub fn rebuild_api(&mut self) {
+        // Preserve any existing per-instance overrides when rebuilding
+        let prev_overrides = self
+            .api
+            .as_ref()
+            .map(|a| *a.overrides())
+            .unwrap_or_default();
         let api = Switchyard::builder(self.facts.clone(), self.audit.clone(), self.policy.clone())
-            .build();
+            .build()
+            .with_overrides(prev_overrides);
         self.api = Some(api);
     }
 
@@ -174,8 +195,7 @@ impl World {
             self.policy.governance.allow_unlocked_commit = true;
         }
         // Rebuild API to propagate any policy changes; preserve smoke runner configuration
-        let mut builder =
-            Switchyard::builder(self.facts.clone(), self.audit.clone(), self.policy.clone());
+        let mut builder = Switchyard::builder(self.facts.clone(), self.audit.clone(), self.policy.clone());
         // Preserve a configured LockManager when present
         if let Some(lock_path) = &self.lock_path {
             builder = builder.with_lock_manager(Box::new(
@@ -185,8 +205,7 @@ impl World {
         if let Some(kind) = self.smoke_runner {
             match kind {
                 SmokeRunnerKind::Default => {
-                    builder = builder
-                        .with_smoke_runner(Box::new(switchyard::adapters::DefaultSmokeRunner));
+                    builder = builder.with_smoke_runner(Box::new(switchyard::adapters::DefaultSmokeRunner));
                 }
                 SmokeRunnerKind::Failing => {
                     #[derive(Debug, Default)]
@@ -204,7 +223,13 @@ impl World {
                 }
             }
         }
-        let api = builder.build();
+        // Preserve any existing per-instance overrides (e.g., EXDEV simulation) across rebuilds
+        let prev_overrides = self
+            .api
+            .as_ref()
+            .map(|a| *a.overrides())
+            .unwrap_or_default();
+        let api = builder.build().with_overrides(prev_overrides);
         self.api = Some(api);
         let plan = self.plan.as_ref().unwrap();
         self.apply_report = Some(

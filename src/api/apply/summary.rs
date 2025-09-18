@@ -79,19 +79,26 @@ impl ApplySummary {
             return self;
         }
         if let Some(obj) = self.fields.as_object_mut() {
-            if errors.iter().any(|e| e.contains("smoke")) {
-                obj.insert("error_id".to_string(), json!(id_str(ErrorId::E_SMOKE)));
-                obj.insert(
-                    "exit_code".to_string(),
-                    json!(exit_code_for(ErrorId::E_SMOKE)),
-                );
+            // Derive classification from the summary chain (case-insensitive mapping)
+            let chain = crate::api::errors::infer_summary_error_ids(errors);
+            let has = |s: &str| chain.iter().any(|&x| x == s);
+            let pick = if has(id_str(ErrorId::E_SMOKE)) {
+                ErrorId::E_SMOKE
+            } else if has(id_str(ErrorId::E_EXDEV)) {
+                ErrorId::E_EXDEV
+            } else if has(id_str(ErrorId::E_LOCKING)) {
+                ErrorId::E_LOCKING
+            } else if has(id_str(ErrorId::E_BACKUP_MISSING)) {
+                ErrorId::E_BACKUP_MISSING
+            } else if has(id_str(ErrorId::E_RESTORE_FAILED)) {
+                ErrorId::E_RESTORE_FAILED
+            } else if has(id_str(ErrorId::E_ATOMIC_SWAP)) {
+                ErrorId::E_ATOMIC_SWAP
             } else {
-                // Default summary mapping for non-smoke failures
-                obj.entry("error_id")
-                    .or_insert(json!(id_str(ErrorId::E_POLICY)));
-                obj.entry("exit_code")
-                    .or_insert(json!(exit_code_for(ErrorId::E_POLICY)));
-            }
+                ErrorId::E_POLICY
+            };
+            obj.insert("error_id".to_string(), json!(id_str(pick)));
+            obj.insert("exit_code".to_string(), json!(exit_code_for(pick)));
         }
         self
     }

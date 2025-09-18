@@ -204,7 +204,7 @@ pub async fn when_apply_plan_commit(world: &mut World) {
             }
         }
     }
-    world.api = Some(builder.build());
+    world.api = Some(builder.build().with_overrides(switchyard::api::Overrides::exdev(false)));
     let plan = world.plan.as_ref().unwrap().clone();
     let _ = world.api.as_ref().unwrap().apply(&plan, ApplyMode::Commit);
 }
