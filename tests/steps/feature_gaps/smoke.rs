@@ -1,4 +1,4 @@
-use cucumber::{given, then, when};
+use cucumber::{given, then};
 
 use crate::bdd_world::World;
 use switchyard::api::Switchyard;

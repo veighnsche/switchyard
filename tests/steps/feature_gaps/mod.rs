@@ -9,7 +9,4 @@ pub mod rescue_aliases;
 pub mod smoke;
 
 // Re-exports for cross-module convenience
-pub use atomicity::when_apply_plan_replaces_cp;
 pub use conservatism_ci::then_side_effects_not_performed;
-pub use degraded_fs::{then_apply_fails_exdev_50, then_emitted_degraded_true_reason};
-pub use smoke::then_auto_rollback_occurs;

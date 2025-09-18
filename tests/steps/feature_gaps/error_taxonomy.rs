@@ -1,7 +1,6 @@
 use cucumber::{given, then, when};
 
 use crate::bdd_world::World;
-use switchyard::types::plan::ApplyMode;
 
 #[given(regex = r"^failures during preflight or apply$")]
 pub async fn given_failures_preflight_or_apply(world: &mut World) {
