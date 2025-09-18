@@ -225,7 +225,11 @@ pub async fn then_apply_fails_smoke(world: &mut World) {
             break;
         }
     }
-    assert!(ok, "expected E_SMOKE with exit_code=80; events=\n{}", dbg.join("\n"));
+    assert!(
+        ok,
+        "expected E_SMOKE with exit_code=80; events=\n{}",
+        dbg.join("\n")
+    );
 }
 
 #[then(regex = r"^executed actions are rolled back automatically$")]

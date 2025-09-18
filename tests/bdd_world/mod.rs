@@ -48,8 +48,14 @@ impl World {
             let base: std::path::PathBuf = std::env::var("SWITCHYARD_BDD_ROOT_BASE")
                 .ok()
                 .map(std::path::PathBuf::from)
-                .or_else(|| std::env::var("CARGO_TARGET_DIR").ok().map(std::path::PathBuf::from))
-                .unwrap_or_else(|| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target"));
+                .or_else(|| {
+                    std::env::var("CARGO_TARGET_DIR")
+                        .ok()
+                        .map(std::path::PathBuf::from)
+                })
+                .unwrap_or_else(|| {
+                    std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target")
+                });
             let base = base.join("bdd-tmp");
             let _ = std::fs::create_dir_all(&base);
             let td = tempfile::Builder::new()
@@ -195,7 +201,8 @@ impl World {
             self.policy.governance.allow_unlocked_commit = true;
         }
         // Rebuild API to propagate any policy changes; preserve smoke runner configuration
-        let mut builder = Switchyard::builder(self.facts.clone(), self.audit.clone(), self.policy.clone());
+        let mut builder =
+            Switchyard::builder(self.facts.clone(), self.audit.clone(), self.policy.clone());
         // Preserve a configured LockManager when present
         if let Some(lock_path) = &self.lock_path {
             builder = builder.with_lock_manager(Box::new(
@@ -205,7 +212,8 @@ impl World {
         if let Some(kind) = self.smoke_runner {
             match kind {
                 SmokeRunnerKind::Default => {
-                    builder = builder.with_smoke_runner(Box::new(switchyard::adapters::DefaultSmokeRunner));
+                    builder = builder
+                        .with_smoke_runner(Box::new(switchyard::adapters::DefaultSmokeRunner));
                 }
                 SmokeRunnerKind::Failing => {
                     #[derive(Debug, Default)]

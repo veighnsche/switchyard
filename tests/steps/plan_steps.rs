@@ -1,7 +1,7 @@
 use cucumber::{given, when};
 
-use crate::bdd_world::World;
 use crate::bdd_support::env::EnvGuard;
+use crate::bdd_world::World;
 use switchyard::api::{Overrides, Switchyard};
 use switchyard::policy::types::SmokePolicy;
 
@@ -33,17 +33,16 @@ pub async fn given_exdev_env(world: &mut World) {
     );
     // Preserve a LockManager if configured by the scenario
     if let Some(lock_path) = &world.lock_path {
-        builder = builder.with_lock_manager(Box::new(
-            switchyard::adapters::FileLockManager::new(lock_path.clone()),
-        ));
+        builder = builder.with_lock_manager(Box::new(switchyard::adapters::FileLockManager::new(
+            lock_path.clone(),
+        )));
     }
     // Preserve an explicitly configured smoke runner
     if let Some(kind) = world.smoke_runner {
         match kind {
             crate::bdd_world::SmokeRunnerKind::Default => {
-                builder = builder.with_smoke_runner(Box::new(
-                    switchyard::adapters::DefaultSmokeRunner,
-                ));
+                builder =
+                    builder.with_smoke_runner(Box::new(switchyard::adapters::DefaultSmokeRunner));
             }
             crate::bdd_world::SmokeRunnerKind::Failing => {
                 #[derive(Debug, Default)]
