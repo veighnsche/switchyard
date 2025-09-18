@@ -1,4 +1,4 @@
-use cucumber::{given, then, when};
+use cucumber::{then, when};
 
 use crate::bdd_world::World;
 
