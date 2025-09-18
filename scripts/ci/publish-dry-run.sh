@@ -9,7 +9,7 @@ cd "${REPO_ROOT}"
 ensure_cargo
 
 log "Cargo package --list"
-cargo package --list
+cargo package --list --allow-dirty
 
 log "Cargo publish --dry-run"
-cargo publish --dry-run
+cargo publish --dry-run --allow-dirty

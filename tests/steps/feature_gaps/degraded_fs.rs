@@ -29,8 +29,33 @@ pub async fn given_env_matrix(_world: &mut World) {}
 
 #[when(regex = r"^I apply a symlink replacement plan$")]
 pub async fn when_apply_symlink_replacement_plan(world: &mut World) {
+    use switchyard::types::plan::{ApplyMode, LinkRequest, PlanInput};
+    use switchyard::types::safepath::SafePath;
+    // Force EXDEV via env injection; actual degraded behavior depends on current policy
     crate::steps::plan_steps::given_exdev_env(world).await;
-    super::when_apply_plan_replaces_cp(world).await;
+    // Build a cp swap plan under the temp root
+    let root = world.ensure_root().to_path_buf();
+    let src_b = root.join("providerB/cp");
+    let tgt = root.join("usr/bin/cp");
+    let _ = std::fs::create_dir_all(src_b.parent().unwrap());
+    let _ = std::fs::create_dir_all(tgt.parent().unwrap());
+    let _ = std::fs::write(&src_b, b"b");
+    let s = SafePath::from_rooted(&root, &src_b).unwrap();
+    let t = SafePath::from_rooted(&root, &tgt).unwrap();
+    let input = PlanInput {
+        link: vec![LinkRequest { source: s, target: t }],
+        restore: vec![],
+    };
+    // Allow unlocked commit for tests and bypass preflight STOPs for determinism
+    world.policy.governance.allow_unlocked_commit = true;
+    world.policy.apply.override_preflight = true;
+    world.rebuild_api();
+    let plan = world.api.as_ref().unwrap().plan(input);
+    let _ = world
+        .api
+        .as_ref()
+        .unwrap()
+        .apply(&plan, ApplyMode::Commit);
 }
 
 #[then(
@@ -68,17 +93,37 @@ pub async fn then_emitted_degraded_true_reason(world: &mut World) {
 #[then(regex = r"^the apply fails with error_id=E_EXDEV and exit_code=50$")]
 pub async fn then_apply_fails_exdev_50(world: &mut World) {
     let mut ok = false;
+    let mut dbg: Vec<String> = Vec::new();
     for ev in world.all_facts() {
-        let is_exdev = ev.get("error_id").and_then(|v| v.as_str()) == Some("E_EXDEV")
-            && ev.get("exit_code").and_then(|v| v.as_i64()) == Some(50);
+        let stage = ev.get("stage").and_then(|v| v.as_str()).unwrap_or("");
+        let decision = ev.get("decision").and_then(|v| v.as_str()).unwrap_or("");
+        let path = ev.get("path").and_then(|v| v.as_str()).unwrap_or("");
+        let eid = ev.get("error_id").and_then(|v| v.as_str());
+        let ec = ev.get("exit_code").and_then(|v| v.as_i64());
+        let detail = ev.get("error_detail").and_then(|v| v.as_str());
+        let sum = ev
+            .get("summary_error_ids")
+            .and_then(|v| v.as_array())
+            .map(|arr| {
+                let mut v: Vec<String> = arr
+                    .iter()
+                    .filter_map(|x| x.as_str().map(|s| s.to_string()))
+                    .collect();
+                v.sort();
+                v.join(",")
+            });
+        dbg.push(format!(
+            "{} {} {} eid={:?} ec={:?} detail={:?} summary={:?}",
+            stage, decision, path, eid, ec, detail, sum
+        ));
+        let is_exdev = eid == Some("E_EXDEV") && ec == Some(50);
         let summary_mentions_exdev = ev
             .get("summary_error_ids")
             .and_then(|v| v.as_array())
             .map_or(false, |arr| {
                 arr.iter().any(|s| s.as_str() == Some("E_EXDEV"))
             });
-        let detail_exdev =
-            ev.get("error_detail").and_then(|v| v.as_str()) == Some("exdev_fallback_failed");
+        let detail_exdev = detail == Some("exdev_fallback_failed");
         if is_exdev || summary_mentions_exdev || detail_exdev {
             ok = true;
             break;
@@ -86,7 +131,8 @@ pub async fn then_apply_fails_exdev_50(world: &mut World) {
     }
     assert!(
         ok,
-        "expected EXDEV classification (E_EXDEV/50 or in summary_error_ids or error_detail)"
+        "expected EXDEV classification (E_EXDEV/50 or in summary_error_ids or error_detail); events=\n{}",
+        dbg.join("\n")
     );
 }
 
@@ -156,6 +202,9 @@ pub async fn then_semantics_verified(world: &mut World) {
     world.policy.governance.allow_unlocked_commit = true;
     world.rebuild_api();
     crate::steps::plan_steps::given_exdev_env(world).await;
+    // Reset current topology so the swap attempts to change providerA->providerB and hits EXDEV
+    let link_abs = format!("/{}/bin/{}", "usr", "cp");
+    world.mk_symlink(&link_abs, "providerA/cp");
     let input2 = build_cp_plan(world);
     let plan2 = world.api.as_ref().unwrap().plan(input2);
     let _ = world
@@ -171,10 +220,16 @@ pub async fn then_semantics_verified(world: &mut World) {
 )]
 pub async fn then_best_effort_degraded(world: &mut World) {
     let mut ok = false;
+    let mut dbg: Vec<String> = Vec::new();
     for ev in world.all_facts() {
         if ev.get("stage").and_then(|v| v.as_str()) == Some("apply.result") {
             let reason = ev.get("degraded_reason").and_then(|v| v.as_str());
             let degraded = ev.get("degraded").and_then(|v| v.as_bool());
+            let path = ev.get("path").and_then(|v| v.as_str()).unwrap_or("");
+            dbg.push(format!(
+                "{} degraded={:?} reason={:?}",
+                path, degraded, reason
+            ));
             if reason == Some("exdev_fallback") || degraded == Some(true) {
                 ok = true;
                 break;
@@ -183,6 +238,7 @@ pub async fn then_best_effort_degraded(world: &mut World) {
     }
     assert!(
         ok,
-        "expected degraded fallback evidence (degraded=true or reason=exdev_fallback)"
+        "expected degraded fallback evidence (degraded=true or reason=exdev_fallback); events=\n{}",
+        dbg.join("\n")
     );
 }

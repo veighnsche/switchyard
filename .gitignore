@@ -22,9 +22,11 @@ tmp
 # Generated artifacts
 golden-diff
 /golden-diff/
+/_site/
 
 # mdBook build output
 /book/book/
+/artifacts/
 
 # SPEC traceability outputs
 /SPEC/traceability.md

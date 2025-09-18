@@ -27,11 +27,11 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Run BDD (failure-only output on failure)
         run: |
-          python3 cargo/switchyard/scripts/bdd_filter_results.py --fail-only
+          python3 scripts/bdd_filter_results.py --fail-only
       - name: Upload BDD lastrun log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bdd-lastrun
-          path: cargo/switchyard/target/bdd-lastrun.log
+          path: target/bdd-lastrun.log
           if-no-files-found: ignore

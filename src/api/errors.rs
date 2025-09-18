@@ -37,6 +37,15 @@ pub fn infer_summary_error_ids(errors: &[String]) -> Vec<&'static str> {
     if joined.contains("exdev") {
         out.push(id_str(ErrorId::E_EXDEV));
     }
+    // Heuristics for cross-filesystem rename errors when OS strings differ
+    if joined.contains("xdev")
+        || joined.contains("cross-device")
+        || joined.contains("cross device")
+        || joined.contains("os error 18")
+        || joined.contains("errno 18")
+    {
+        out.push(id_str(ErrorId::E_EXDEV));
+    }
     if joined.contains("atomic") || joined.contains("symlink") {
         out.push(id_str(ErrorId::E_ATOMIC_SWAP));
     }

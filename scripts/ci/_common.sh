@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Ensure cargo-installed binaries (e.g., mdbook) are in PATH
+# Many CI helpers rely on tools installed via `cargo install` which land in ~/.cargo/bin
+if [[ -d "${HOME}/.cargo/bin" ]]; then
+  export PATH="${HOME}/.cargo/bin:${PATH}"
+fi
+
 # Resolve roots
 _SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Crate root = two directories up (scripts/ci/ -> crate/)

@@ -4,7 +4,7 @@ SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1091
 source "${SELF_DIR}/_common.sh"
 
-MSRV_TOOLCHAIN="${MSRV_TOOLCHAIN:-1.81.0}"
+MSRV_TOOLCHAIN="${MSRV_TOOLCHAIN:-1.85.0}"
 
 cd "${REPO_ROOT}"
 

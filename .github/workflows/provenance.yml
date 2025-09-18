@@ -46,15 +46,15 @@ jobs:
         env:
           PROVENANCE_ED25519_PRIVATE_KEY_B64: ${{ secrets.PROVENANCE_ED25519_PRIVATE_KEY_B64 }}
         run: |
-          python3 cargo/switchyard/scripts/provenance_ci.py
+          python3 scripts/provenance_ci.py
       - name: Verify digests
         run: |
-          python3 cargo/switchyard/scripts/verify_provenance_digests.py
+          python3 scripts/verify_provenance_digests.py
       - name: Verify signature (if public key provided)
         env:
           PROVENANCE_ED25519_PUBLIC_KEY_B64: ${{ secrets.PROVENANCE_ED25519_PUBLIC_KEY_B64 }}
         run: |
-          python3 cargo/switchyard/scripts/verify_provenance_signature.py
+          python3 scripts/verify_provenance_signature.py
       - name: Upload Provenance artifacts (ci/)
         if: always()
         uses: actions/upload-artifact@v4

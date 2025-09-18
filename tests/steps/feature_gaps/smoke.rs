@@ -34,8 +34,29 @@ pub async fn given_failing_smoke_runner(world: &mut World) {
 #[then(regex = r"^the smoke suite runs and detects the failure$")]
 pub async fn then_smoke_detects_failure(world: &mut World) {
     let mut saw = false;
+    let mut dbg: Vec<String> = Vec::new();
     for ev in world.all_facts() {
-        if ev.get("error_id").and_then(|v| v.as_str()) == Some("E_SMOKE") {
+        let stage = ev.get("stage").and_then(|v| v.as_str()).unwrap_or("");
+        let decision = ev.get("decision").and_then(|v| v.as_str()).unwrap_or("");
+        let action = ev.get("action_id").and_then(|v| v.as_str());
+        let eid = ev.get("error_id").and_then(|v| v.as_str());
+        let ec = ev.get("exit_code").and_then(|v| v.as_i64());
+        let sum = ev
+            .get("summary_error_ids")
+            .and_then(|v| v.as_array())
+            .map(|arr| {
+                let mut v: Vec<String> = arr
+                    .iter()
+                    .filter_map(|x| x.as_str().map(|s| s.to_string()))
+                    .collect();
+                v.sort();
+                v.join(",")
+            });
+        dbg.push(format!(
+            "{} {} action={:?} eid={:?} ec={:?} summary={:?}",
+            stage, decision, action, eid, ec, sum
+        ));
+        if eid == Some("E_SMOKE") {
             saw = true;
             break;
         }
@@ -46,7 +67,11 @@ pub async fn then_smoke_detects_failure(world: &mut World) {
             }
         }
     }
-    assert!(saw, "expected E_SMOKE in facts");
+    assert!(
+        saw,
+        "expected E_SMOKE in facts; events=\n{}",
+        dbg.join("\n")
+    );
 }
 
 #[then(regex = r"^automatic rollback occurs unless policy explicitly disables it$")]
