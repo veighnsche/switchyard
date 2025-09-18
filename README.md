@@ -1,4 +1,4 @@
-# Switchyard (Library Crate)
+# Switchyard-fs
 
 [![Crates.io](https://img.shields.io/crates/v/switchyard-fs.svg)](https://crates.io/crates/switchyard-fs)
 [![docs.rs](https://img.shields.io/docsrs/switchyard-fs)](https://docs.rs/switchyard-fs)
@@ -12,7 +12,7 @@
 >
 > API docs on docs.rs: <https://docs.rs/switchyard-fs>
 
-Switchyard is a Rust library that provides a safe, deterministic, and auditable engine for applying system changes with:
+Switchyard-fs is a Rust library that provides a safe, deterministic, and auditable engine for applying system changes with:
 
 - Atomic symlink replacement with backup/restore
 - Preflight policy gating and capability probes
@@ -21,7 +21,7 @@ Switchyard is a Rust library that provides a safe, deterministic, and auditable 
 - Optional post-apply smoke checks with auto-rollback
 - Structured facts and audit emission with provenance and exit codes
 
-Switchyard can be used standalone or embedded by higher‑level CLIs. In some workspaces it may be included as a Git submodule.
+Switchyard-fs can be used standalone or embedded by higher‑level CLIs. In some workspaces it may be included as a Git submodule.
 
 Status: Core flows implemented with structured audit and locking; some features are intentionally minimal while SPEC v1.1 evolves. See the mdBook for coverage and roadmap.
 
