@@ -20,13 +20,13 @@ jobs:
       - name: Install mdbook-linkcheck
         run: cargo install mdbook-linkcheck
       - name: Build book
-        run: mdbook build cargo/switchyard/book
+        run: mdbook build book
       - name: Upload book artifact (preview)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mdbook-site
-          path: cargo/switchyard/book/book
+          path: book/book
           if-no-files-found: error
 
   book-deploy:
@@ -46,10 +46,10 @@ jobs:
       - name: Install mdbook-linkcheck
         run: cargo install mdbook-linkcheck
       - name: Build book
-        run: mdbook build cargo/switchyard/book
+        run: mdbook build book
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: cargo/switchyard/book/book
+          publish_dir: book/book
           force_orphan: true

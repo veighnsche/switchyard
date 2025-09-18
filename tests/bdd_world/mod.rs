@@ -178,9 +178,9 @@ impl World {
             Switchyard::builder(self.facts.clone(), self.audit.clone(), self.policy.clone());
         // Preserve a configured LockManager when present
         if let Some(lock_path) = &self.lock_path {
-            builder = builder.with_lock_manager(Box::new(switchyard::adapters::FileLockManager::new(
-                lock_path.clone(),
-            )));
+            builder = builder.with_lock_manager(Box::new(
+                switchyard::adapters::FileLockManager::new(lock_path.clone()),
+            ));
         }
         if let Some(kind) = self.smoke_runner {
             match kind {

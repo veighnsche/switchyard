@@ -74,17 +74,20 @@ pub async fn then_apply_fails_exdev_50(world: &mut World) {
         let summary_mentions_exdev = ev
             .get("summary_error_ids")
             .and_then(|v| v.as_array())
-            .map_or(false, |arr| arr.iter().any(|s| s.as_str() == Some("E_EXDEV")));
-        let detail_exdev = ev
-            .get("error_detail")
-            .and_then(|v| v.as_str())
-            == Some("exdev_fallback_failed");
+            .map_or(false, |arr| {
+                arr.iter().any(|s| s.as_str() == Some("E_EXDEV"))
+            });
+        let detail_exdev =
+            ev.get("error_detail").and_then(|v| v.as_str()) == Some("exdev_fallback_failed");
         if is_exdev || summary_mentions_exdev || detail_exdev {
             ok = true;
             break;
         }
     }
-    assert!(ok, "expected EXDEV classification (E_EXDEV/50 or in summary_error_ids or error_detail)");
+    assert!(
+        ok,
+        "expected EXDEV classification (E_EXDEV/50 or in summary_error_ids or error_detail)"
+    );
 }
 
 #[then(regex = r#"^emitted facts include degraded=false with degraded_reason=\"exdev_fallback\"$"#)]

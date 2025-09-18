@@ -212,9 +212,16 @@ pub async fn then_lock_attempts(world: &mut World) {
     let mut ok_wait = false;
     for ev in world.all_facts() {
         if ev.get("stage").and_then(|v| v.as_str()) == Some("apply.attempt") {
-            if ev.get("lock_attempts").is_some() { ok_attempts = true; }
-            if ev.get("lock_wait_ms").is_some() { ok_wait = true; }
+            if ev.get("lock_attempts").is_some() {
+                ok_attempts = true;
+            }
+            if ev.get("lock_wait_ms").is_some() {
+                ok_wait = true;
+            }
         }
     }
-    assert!(ok_attempts || ok_wait, "expected lock_attempts or lock_wait_ms present in apply.attempt");
+    assert!(
+        ok_attempts || ok_wait,
+        "expected lock_attempts or lock_wait_ms present in apply.attempt"
+    );
 }
