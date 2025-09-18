@@ -81,7 +81,7 @@ impl ApplySummary {
         if let Some(obj) = self.fields.as_object_mut() {
             // Derive classification from the summary chain (case-insensitive mapping)
             let chain = crate::api::errors::infer_summary_error_ids(errors);
-            let has = |s: &str| chain.iter().any(|&x| x == s);
+            let has = |s: &str| chain.contains(&s);
             let pick = if has(id_str(ErrorId::E_SMOKE)) {
                 ErrorId::E_SMOKE
             } else if has(id_str(ErrorId::E_EXDEV)) {

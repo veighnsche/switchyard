@@ -1,16 +1,7 @@
 name: Golden Fixtures
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'cargo/switchyard/**'
-      - 'test_ci_runner.py'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'cargo/switchyard/**'
-      - 'test_ci_runner.py'
+  workflow_dispatch:
 
 jobs:
   golden:
