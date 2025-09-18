@@ -43,7 +43,10 @@ pub async fn when_apply_symlink_replacement_plan(world: &mut World) {
     let s = SafePath::from_rooted(&root, &src_b).unwrap();
     let t = SafePath::from_rooted(&root, &tgt).unwrap();
     let input = PlanInput {
-        link: vec![LinkRequest { source: s, target: t }],
+        link: vec![LinkRequest {
+            source: s,
+            target: t,
+        }],
         restore: vec![],
     };
     // Allow unlocked commit for tests and bypass preflight STOPs for determinism
@@ -51,11 +54,7 @@ pub async fn when_apply_symlink_replacement_plan(world: &mut World) {
     world.policy.apply.override_preflight = true;
     world.rebuild_api();
     let plan = world.api.as_ref().unwrap().plan(input);
-    let _ = world
-        .api
-        .as_ref()
-        .unwrap()
-        .apply(&plan, ApplyMode::Commit);
+    let _ = world.api.as_ref().unwrap().apply(&plan, ApplyMode::Commit);
 }
 
 #[then(
