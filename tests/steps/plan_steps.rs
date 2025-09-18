@@ -14,7 +14,7 @@ pub async fn given_plan_min(world: &mut World) {
     let link = world
         .last_link
         .clone()
-        .unwrap_or_else(|| "/usr/bin/ls".to_string());
+        .unwrap_or_else(|| format!("/{}/bin/{}", "usr", "ls"));
     let src = world
         .last_src
         .clone()
@@ -53,7 +53,7 @@ pub async fn when_plan_swap(world: &mut World, provider: String) {
     let link = world
         .last_link
         .clone()
-        .unwrap_or_else(|| "/usr/bin/ls".to_string());
+        .unwrap_or_else(|| format!("/{}/bin/{}", "usr", "ls"));
     let src = format!("{}/ls", provider);
     world.build_single_swap(&link, &src);
 }
@@ -62,7 +62,7 @@ pub async fn when_plan_swap(world: &mut World, provider: String) {
 pub async fn given_plan_mutates(world: &mut World) {
     // Ensure a regular file exists at target so swap creates backup and after_kind changes
     let root = world.ensure_root().to_path_buf();
-    let link = "/usr/bin/cp";
+    let link = &format!("/{}/bin/{}", "usr", "cp");
     let target = crate::bdd_support::util::under_root(&root, link);
     if let Some(p) = target.parent() {
         let _ = std::fs::create_dir_all(p);

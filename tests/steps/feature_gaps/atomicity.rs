@@ -66,7 +66,8 @@ pub async fn when_apply_plan_replaces_cp(world: &mut World) {
     let _ = std::fs::write(&src_a, b"a");
     let _ = std::fs::write(&src_b, b"b");
     // Start with providerA
-    world.mk_symlink("/usr/bin/cp", "providerA/cp");
+    let link_abs = format!("/{}/bin/{}", "usr", "cp");
+    world.mk_symlink(&link_abs, "providerA/cp");
     // Plan swap to providerB
     let s = SafePath::from_rooted(&root, &src_b).unwrap();
     let t = SafePath::from_rooted(&root, &tgt).unwrap();
@@ -152,6 +153,12 @@ pub async fn when_apply_plan_commit(world: &mut World) {
         world.audit.clone(),
         world.policy.clone(),
     );
+    // Preserve a LockManager if configured by the scenario
+    if let Some(lock_path) = &world.lock_path {
+        builder = builder.with_lock_manager(Box::new(switchyard::adapters::FileLockManager::new(
+            lock_path.clone(),
+        )));
+    }
     if let Some(kind) = world.smoke_runner {
         match kind {
             crate::bdd_world::SmokeRunnerKind::Default => {

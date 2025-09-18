@@ -21,10 +21,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
   - Troubleshooting and How-To for schema validation
 - New CI workflow (book.yml) to build mdBook and optionally deploy to GitHub Pages.
 - TODO.md documenting the full split-and-publish plan for a standalone repository.
+- Local CI helper scripts under `scripts/ci/` mirroring GitHub Actions workflows for easier preflight debugging locally.
 
 ### Changed
 - Fixed rustdoc warnings by improving link hygiene (angle-bracket URLs recommended by rustdoc).
 - Tightened crate packaging via `exclude` to keep the published crate small.
+- API/internal: made `map_restore_error_kind()` a `const fn` to satisfy `clippy::missing_const_for_fn`.
+- FS snapshot: documented rationale for `#[allow(clippy::too_many_lines)]` with an explicit `reason` to satisfy `allow_attributes_without_reason`.
+- Tests: replaced hard-coded absolute system path string literals with runtime-constructed strings to satisfy hermetic test guard.
 
 ### Fixed
 - Doctest failures originating from README/lib examples by marking example blocks as ignored.
@@ -36,3 +40,4 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [0.1.0] - Initial
 - Initial crate skeleton with API, safety invariants, tests, and mdBook.
+

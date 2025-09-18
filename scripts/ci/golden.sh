@@ -11,7 +11,9 @@ cd "${REPO_ROOT}"
 CANDIDATES=(
   "${CI_RUNNER:-}"
   "${REPO_ROOT}/test_ci_runner.py"
+  "${WORKSPACE_ROOT}/test_ci_runner.py"
   "${REPO_ROOT}/../test_ci_runner.py"
+  "${REPO_ROOT}/../../test_ci_runner.py"
 )
 CI_RUNNER_PATH=""
 for c in "${CANDIDATES[@]}"; do

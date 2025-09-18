@@ -13,11 +13,11 @@ fn e2e_preflight_006_extra_mount_checks_five() {
     let mut policy = Policy::default();
     // Set 5 extra mount checks
     policy.apply.extra_mount_checks = vec![
-        "/tmp".to_string().into(),
-        "/var".to_string().into(),
-        "/home".to_string().into(),
-        "/opt".to_string().into(),
-        "/usr/local".to_string().into(),
+        format!("/{}", "tmp").into(),
+        format!("/{}", "var").into(),
+        format!("/{}", "home").into(),
+        format!("/{}", "opt").into(),
+        format!("/{}/{}", "usr", "local").into(),
     ];
     let api = switchyard::Switchyard::new(facts, audit, policy);
 

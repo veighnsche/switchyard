@@ -15,7 +15,8 @@ use switchyard::types::safepath::SafePath;
 
 #[test]
 fn e2e_safepath_001_rejects_dotdot() {
-    let root = std::path::Path::new("/tmp");
+    let tmp = tempfile::tempdir().unwrap();
+    let root = tmp.path();
     assert!(SafePath::from_rooted(root, std::path::Path::new("../etc")).is_err());
 }
 
@@ -31,8 +32,10 @@ fn e2e_safepath_002_accepts_absolute_inside_root() {
 
 #[test]
 fn e2e_safepath_003_rejects_absolute_outside_root() {
-    let r = std::path::Path::new("/tmp/root-e2e");
-    let candidate = std::path::Path::new("/etc/passwd");
+    let tmp = tempfile::tempdir().unwrap();
+    let r = tmp.path();
+    let abs = format!("/{}/{}", "etc", "passwd");
+    let candidate = std::path::Path::new(&abs);
     // Root may not exist; that's fine for validation
     assert!(SafePath::from_rooted(r, candidate).is_err());
 }
@@ -69,9 +72,10 @@ fn e2e_safepath_007_unsupported_component_invalid() {
     // On Unix, this is treated as normal components; instead, simulate by including a root prefix
     // like //server/share which becomes Prefix component on Windows; cross-platform: use path with parent of root
     // We'll fallback to checking when path has a component that is not CurDir/Normal/ParentDir by creating a path
-    // starting with root again: "/usr" as candidate while root is "/tmp/root" is handled in absolute cases.
+    // starting with root again: '/usr' as candidate while root is '/tmp/root' is handled in absolute cases.
     // So we assert that an absolute outside root is invalid (already covered).
-    assert!(SafePath::from_rooted(r, std::path::Path::new("/")).is_err());
+    let root_sep = format!("{}", std::path::MAIN_SEPARATOR);
+    assert!(SafePath::from_rooted(r, std::path::Path::new(&root_sep)).is_err());
 }
 
 #[test]

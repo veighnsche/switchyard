@@ -20,7 +20,7 @@ pub fn map_swap_error(e: &std::io::Error) -> ErrorId {
 /// Keep this conservative to support older stable compilers; many `ErrorKind`
 /// variants (e.g., `NotADirectory`, `IsADirectory`) were stabilized later.
 #[must_use]
-pub fn map_restore_error_kind(kind: ErrorKind) -> ErrorId {
+pub const fn map_restore_error_kind(kind: ErrorKind) -> ErrorId {
     match kind {
         ErrorKind::NotFound => ErrorId::E_BACKUP_MISSING,
         _ => ErrorId::E_RESTORE_FAILED,

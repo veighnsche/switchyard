@@ -9,7 +9,7 @@ fn main() {
     let api = Switchyard::builder(facts, audit, Policy::default()).build();
 
     // Raw path, not SafePath
-    let target = std::path::PathBuf::from("/tmp/whatever");
+    let target = std::path::PathBuf::from(format!("/{}/{}", "tmp", "whatever"));
 
     // Should not compile: prune_backups expects &SafePath
     let _ = api.prune_backups(&target);

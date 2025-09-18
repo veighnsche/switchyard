@@ -22,6 +22,8 @@ for tc in "${TOOLCHAINS_LIST[@]}"; do
   with_toolchain "${tc}" cargo build --all-features
 
   log "Test (all features, nocapture) on ${tc}"
-  with_toolchain "${tc}" cargo test --all-features -- --nocapture
+  # Avoid passing --nocapture since some integration tests may disable the test harness (e.g., cucumber),
+  # which would interpret --nocapture as a binary arg and fail. This mirrors CI behavior closely enough.
+  with_toolchain "${tc}" cargo test --all-features
 
 done

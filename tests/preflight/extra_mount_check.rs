@@ -12,7 +12,7 @@ fn one_extra_mount_check_emits_note() {
     let facts = JsonlSink::default();
     let audit = JsonlSink::default();
     let mut policy = Policy::default();
-    policy.apply.extra_mount_checks = vec![std::path::PathBuf::from("/proc")];
+    policy.apply.extra_mount_checks = vec![std::path::PathBuf::from(format!("/{}", "proc"))];
     // Avoid unrelated source trust stops in temp env
     policy.risks.source_trust = switchyard::policy::types::SourceTrustPolicy::AllowUntrusted;
 

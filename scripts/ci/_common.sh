@@ -1,8 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Resolve repo root (two directories up from this file)
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# Resolve roots
+_SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Crate root = two directories up (scripts/ci/ -> crate/)
+CRATE_ROOT="$(cd "${_SELF_DIR}/../.." && pwd)"
+# Workspace root (git toplevel if available), fallback to crate root
+if git -C "${_SELF_DIR}" rev-parse --show-toplevel >/dev/null 2>&1; then
+  WORKSPACE_ROOT="$(git -C "${_SELF_DIR}" rev-parse --show-toplevel)"
+else
+  WORKSPACE_ROOT="${CRATE_ROOT}"
+fi
+# Default to crate root for cargo-related operations
+REPO_ROOT="${CRATE_ROOT}"
 ARTIFACTS_DIR="${ARTIFACTS_DIR:-${REPO_ROOT}/artifacts}"
 
 log() { printf "[%s] %s\n" "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*" >&2; }

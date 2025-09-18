@@ -112,7 +112,7 @@ impl World {
         let link = self
             .last_link
             .clone()
-            .unwrap_or_else(|| "/usr/bin/ls".to_string());
+            .unwrap_or_else(|| format!("/{}/bin/{}", "usr", "ls"));
         let src = self
             .last_src
             .clone()

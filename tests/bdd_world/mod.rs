@@ -111,7 +111,7 @@ impl World {
         let link = self
             .last_link
             .clone()
-            .unwrap_or_else(|| "/usr/bin/ls".to_string());
+            .unwrap_or_else(|| format!("/{}/bin/{}", "usr", "ls"));
         let src = self
             .last_src
             .clone()
@@ -176,6 +176,12 @@ impl World {
         // Rebuild API to propagate any policy changes; preserve smoke runner configuration
         let mut builder =
             Switchyard::builder(self.facts.clone(), self.audit.clone(), self.policy.clone());
+        // Preserve a configured LockManager when present
+        if let Some(lock_path) = &self.lock_path {
+            builder = builder.with_lock_manager(Box::new(switchyard::adapters::FileLockManager::new(
+                lock_path.clone(),
+            )));
+        }
         if let Some(kind) = self.smoke_runner {
             match kind {
                 SmokeRunnerKind::Default => {

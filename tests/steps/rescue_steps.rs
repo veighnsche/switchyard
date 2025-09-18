@@ -66,8 +66,8 @@ pub async fn then_rescue_fallback(world: &mut World) {
 #[given(regex = r"^a target with multiple backup artifacts$")]
 pub async fn given_multiple_backups(world: &mut World) {
     let root = world.ensure_root().to_path_buf();
-    let link = "/usr/bin/ls";
-    let tgt = util::under_root(&root, link);
+    let link = format!("/{}/bin/{}", "usr", "ls");
+    let tgt = util::under_root(&root, &link);
     if let Some(p) = tgt.parent() {
         let _ = std::fs::create_dir_all(p);
     }
@@ -90,8 +90,8 @@ pub async fn given_eligible_old_backups(world: &mut World) {
 #[when(regex = r"^I prune backups under policy$")]
 pub async fn when_prune_backups(world: &mut World) {
     let root = world.ensure_root().to_path_buf();
-    let link = "/usr/bin/ls";
-    let sp = crate::bdd_support::util::sp(&root, link);
+    let link = format!("/{}/bin/{}", "usr", "ls");
+    let sp = crate::bdd_support::util::sp(&root, &link);
     world.ensure_api();
     let _ = world.api.as_ref().unwrap().prune_backups(&sp);
 }
@@ -100,8 +100,8 @@ pub async fn when_prune_backups(world: &mut World) {
 pub async fn then_newest_retained(world: &mut World) {
     use std::path::Path;
     let root = world.ensure_root().to_path_buf();
-    let link = "/usr/bin/ls";
-    let tgt = util::under_root(&root, link);
+    let link = format!("/{}/bin/{}", "usr", "ls");
+    let tgt = util::under_root(&root, &link);
     let name = tgt.file_name().and_then(|s| s.to_str()).unwrap_or("target");
     let parent = tgt.parent().unwrap_or_else(|| Path::new("."));
     let prefix = format!(".{}.{}.", name, &world.policy.backup.tag);

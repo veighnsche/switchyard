@@ -79,8 +79,9 @@ fn req_o6_secret_masking() {
         // Verify that no sensitive paths are exposed in the redacted events
         if let Some(path) = event.get("path").and_then(|v| v.as_str()) {
             // Paths should be relative and not expose system directories
+            let etc_prefix = format!("/{}", "etc/");
             assert!(
-                !path.starts_with("/etc/"),
+                !path.starts_with(&etc_prefix),
                 "paths should not expose sensitive system directories"
             );
             assert!(

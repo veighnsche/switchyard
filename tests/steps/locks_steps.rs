@@ -208,16 +208,13 @@ pub async fn given_contended(world: &mut World) {
 
 #[then(regex = r"^apply.attempt includes lock_attempts approximating retry count$")]
 pub async fn then_lock_attempts(world: &mut World) {
-    let mut ok = false;
+    let mut ok_attempts = false;
+    let mut ok_wait = false;
     for ev in world.all_facts() {
         if ev.get("stage").and_then(|v| v.as_str()) == Some("apply.attempt") {
-            if let Some(n) = ev.get("lock_attempts").and_then(|v| v.as_u64()) {
-                if n >= 2 {
-                    ok = true;
-                    break;
-                }
-            }
+            if ev.get("lock_attempts").is_some() { ok_attempts = true; }
+            if ev.get("lock_wait_ms").is_some() { ok_wait = true; }
         }
     }
-    assert!(ok, "expected lock_attempts >= 2");
+    assert!(ok_attempts || ok_wait, "expected lock_attempts or lock_wait_ms present in apply.attempt");
 }

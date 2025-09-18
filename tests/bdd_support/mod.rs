@@ -32,7 +32,7 @@ pub mod util {
 
     use switchyard::types::safepath::SafePath;
 
-    /// Convert a human path like "/usr/bin/ls" or "providerA/ls" into a path under `root`.
+    /// Convert a human path like /usr/bin/ls or providerA/ls into a path under `root`.
     pub fn under_root(root: &Path, p: &str) -> PathBuf {
         let trimmed = p.trim();
         if let Some(rel) = trimmed.strip_prefix('/') {

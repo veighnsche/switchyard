@@ -11,5 +11,7 @@ cd "${REPO_ROOT}"
 log "Ensuring Rust toolchain ${MSRV_TOOLCHAIN}"
 ensure_toolchain "${MSRV_TOOLCHAIN}"
 
-log "Building workspace (all features) with ${MSRV_TOOLCHAIN}"
-with_toolchain "${MSRV_TOOLCHAIN}" cargo build --all-features --workspace
+log "Building crate (all features) with ${MSRV_TOOLCHAIN}"
+# Build only this crate to mirror the upstream switchyard repo CI. Building the full
+# workspace here may pull in unrelated crates from the monorepo and fail MSRV unnecessarily.
+with_toolchain "${MSRV_TOOLCHAIN}" cargo build --all-features

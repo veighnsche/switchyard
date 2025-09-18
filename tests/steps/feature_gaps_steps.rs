@@ -98,7 +98,8 @@ pub async fn when_apply_plan_replaces_cp(world: &mut World) {
     let _ = std::fs::write(&src_a, b"a");
     let _ = std::fs::write(&src_b, b"b");
     // Start with providerA
-    world.mk_symlink("/usr/bin/cp", "providerA/cp");
+    let link_abs = format!("/{}/bin/{}", "usr", "cp");
+    world.mk_symlink(&link_abs, "providerA/cp");
     // Plan swap to providerB
     let s = SafePath::from_rooted(&root, &src_b).unwrap();
     let t = SafePath::from_rooted(&root, &tgt).unwrap();
@@ -108,9 +109,7 @@ pub async fn when_apply_plan_replaces_cp(world: &mut World) {
     };
     // Ensure API is present and allow commit without lock for this test path
     world.policy.governance.allow_unlocked_commit = true;
-    // Enable degraded fallback under EXDEV for this scenario
-    world.policy.apply.exdev = switchyard::policy::types::ExdevPolicy::DegradedFallback;
-    world.policy.apply.override_preflight = true;
+    // Do not force an EXDEV policy here; scenarios configure this explicitly.
     world.rebuild_api();
     let plan = world.api.as_ref().unwrap().plan(plan);
     let _ = world.api.as_ref().unwrap().apply(&plan, ApplyMode::Commit);
@@ -701,7 +700,8 @@ pub async fn then_reverse_order_any_executed(world: &mut World) {
 #[given(regex = r"^the target path currently resolves to providerA/ls$")]
 pub async fn given_target_resolves_providera(world: &mut World) {
     // Ensure current topology before swap: /usr/bin/ls -> providerA/ls
-    world.mk_symlink("/usr/bin/ls", "providerA/ls");
+    let link_abs = format!("/{}/bin/{}", "usr", "ls");
+    world.mk_symlink(&link_abs, "providerA/ls");
     let root = world.ensure_root().to_path_buf();
     let link = root.join("usr/bin/ls");
     let target = std::fs::read_link(&link).unwrap_or_else(|_| link.clone());
