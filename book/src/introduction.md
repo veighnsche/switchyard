@@ -26,7 +26,7 @@ Safety highlights (from SPEC)
 ## Supported Toolchains
 
 - Stable: 1.89.0 (continuously tested in CI) — see the announcement: https://blog.rust-lang.org/2025/08/07/Rust-1.89.0/
-- MSRV: 1.81 (declared in `Cargo.toml` and enforced by the `MSRV` workflow)
+- MSRV: 1.89 (declared in `Cargo.toml` and enforced by the `MSRV` workflow)
 
 Nightly and Beta channels are also exercised in CI for early signal.
 

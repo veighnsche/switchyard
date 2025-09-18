@@ -142,6 +142,21 @@ pub async fn given_smoke_command_will_fail(world: &mut World) {
     world.policy.governance.smoke = switchyard::policy::types::SmokePolicy::Require {
         auto_rollback: true,
     };
+    // Ensure apply proceeds and is not blocked by preflight in this controlled scenario
+    world.policy.apply.override_preflight = true;
+    // Explicitly disable any EXDEV injection to make sure apply succeeds so smoke can fail
+    world
+        .env_guards
+        .push(crate::bdd_support::env::EnvGuard::new(
+            "SWITCHYARD_TEST_ALLOW_ENV_OVERRIDES",
+            "0",
+        ));
+    world
+        .env_guards
+        .push(crate::bdd_support::env::EnvGuard::new(
+            "SWITCHYARD_FORCE_EXDEV",
+            "0",
+        ));
 }
 
 #[then(regex = r"^the minimal smoke suite runs after apply$")]

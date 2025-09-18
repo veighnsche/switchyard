@@ -11,7 +11,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
   - `homepage` → GitHub Pages (mdBook)
   - `documentation` → docs.rs
   - `readme` → crate README
-  - `categories`, `keywords`, `rust-version = 1.75`
+  - `categories`, `keywords`, `rust-version = 1.89`
   - badges and `package.metadata.docs.rs`
 - README and lib docs include:
   - Prominent links to mdBook and docs.rs

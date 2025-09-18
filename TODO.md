@@ -290,7 +290,7 @@ Add these near the top of `README.md` in the new repo:
 [![CI](https://github.com/<org>/<repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<org>/<repo>/actions/workflows/ci.yml)
 [![mdBook](https://img.shields.io/badge/book-mdBook-blue)](https://<org>.github.io/<repo>/)
 [![License: Apache-2.0/MIT](https://img.shields.io/badge/license-Apache--2.0%2FMIT-blue.svg)](./LICENSE)
-[![MSRV 1.75+](https://img.shields.io/badge/MSRV-1.75%2B-informational)](./Cargo.toml)
+[![MSRV 1.89+](https://img.shields.io/badge/MSRV-1.89%2B-informational)](./Cargo.toml)
 ```
 
 Replace `<org>/<repo>` with your GitHub org/repo (e.g., `veighnsche/switchyard`).

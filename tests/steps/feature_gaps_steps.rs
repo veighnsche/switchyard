@@ -390,50 +390,7 @@ pub async fn given_env_matrix(_world: &mut World) {}
 // ----------------------
 // Health verification / Smoke
 // ----------------------
-
-#[given(regex = r"^a Switchyard with SmokePolicy Require$")]
-pub async fn given_switchyard_smoke_require(world: &mut World) {
-    crate::steps::plan_steps::given_smoke(world).await;
-}
-
-#[given(regex = r"^a failing SmokeTestRunner$")]
-pub async fn given_failing_smoke_runner(world: &mut World) {
-    #[derive(Debug, Default)]
-    struct Failing;
-    impl switchyard::adapters::SmokeTestRunner for Failing {
-        fn run(&self, _plan: &switchyard::types::plan::Plan) -> Result<(), switchyard::adapters::smoke::SmokeFailure> {
-            Err(switchyard::adapters::smoke::SmokeFailure)
-        }
-    }
-    let api = Switchyard::builder(world.facts.clone(), world.audit.clone(), world.policy.clone())
-        .with_smoke_runner(Box::new(Failing))
-        .build();
-    world.api = Some(api);
-}
-
-#[then(regex = r"^the smoke suite runs and detects the failure$")]
-pub async fn then_smoke_detects_failure(world: &mut World) {
-    let mut saw = false;
-    for ev in world.all_facts() {
-        if ev.get("error_id").and_then(|v| v.as_str()) == Some("E_SMOKE") {
-            saw = true;
-            break;
-        }
-    }
-    assert!(saw, "expected E_SMOKE in facts");
-}
-
-#[then(regex = r"^automatic rollback occurs unless policy explicitly disables it$")]
-pub async fn then_auto_rollback_occurs(world: &mut World) {
-    let mut saw_rb = false;
-    for ev in world.all_facts() {
-        if ev.get("stage").and_then(|v| v.as_str()) == Some("rollback") {
-            saw_rb = true;
-            break;
-        }
-    }
-    assert!(saw_rb, "expected rollback events after smoke failure");
-}
+// Duplicates removed; canonical implementations live in tests/steps/feature_gaps/smoke.rs
 
 // ----------------------
 // Locking and single mutator (aliases)
@@ -508,25 +465,7 @@ pub async fn then_fail_closed_policy_override(world: &mut World) {
 }
 
 // Health verification helpers
-#[given(regex = r"^a configured SmokeTestRunner$")]
-pub async fn given_configured_smoke_runner(world: &mut World) {
-    let api = Switchyard::builder(world.facts.clone(), world.audit.clone(), world.policy.clone())
-        .with_smoke_runner(Box::new(switchyard::adapters::DefaultSmokeRunner))
-        .build();
-    world.api = Some(api);
-}
-
-#[given(regex = r"^auto_rollback is enabled$")]
-pub async fn given_auto_rollback_enabled(world: &mut World) {
-    world.policy.governance.smoke = switchyard::policy::types::SmokePolicy::Require { auto_rollback: true };
-    world.rebuild_api();
-}
-
-#[given(regex = r"^at least one smoke command will fail with a non-zero exit$")]
-pub async fn given_smoke_command_will_fail(world: &mut World) {
-    given_failing_smoke_runner(world).await;
-    world.smoke_runner = Some(crate::bdd_world::SmokeRunnerKind::Failing);
-}
+// Step definitions moved to tests/steps/feature_gaps/smoke.rs
 
 #[then(regex = r"^a rescue profile remains available for recovery$")]
 pub async fn then_rescue_profile_available(world: &mut World) {

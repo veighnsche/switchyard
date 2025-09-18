@@ -3,7 +3,7 @@
 Thanks for your interest in contributing!
 
 - Code style: `cargo fmt` and `cargo clippy -- -D warnings` must pass.
-- MSRV: 1.75 (see `Cargo.toml`). Try to avoid new language features beyond MSRV.
+- MSRV: 1.89 (see `Cargo.toml`). Try to avoid new language features beyond MSRV.
 - Tests: `cargo test` should pass locally. For BDD, run `cargo test --features bdd --test bdd`.
 - Docs: update the mdBook under `book/` when you change behavior.
 - Changelog: add notable user-visible changes to `CHANGELOG.md`.

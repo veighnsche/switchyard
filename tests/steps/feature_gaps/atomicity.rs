@@ -21,6 +21,12 @@ pub async fn then_ls_resolves_to_providerb(world: &mut World) {
     );
 }
 
+#[then(regex = r"^the engine performs reverse-order rollback of any executed actions$")]
+pub async fn then_reverse_order_any_executed(world: &mut World) {
+    // Reuse the reverse-order rollback assertion
+    crate::steps::rollback_steps::then_rollback_of_a(world).await;
+}
+
 #[given(regex = r"^the target path currently resolves to providerA/ls$")]
 pub async fn given_target_resolves_providera(world: &mut World) {
     // Ensure current topology before swap: /usr/bin/ls -> providerA/ls
